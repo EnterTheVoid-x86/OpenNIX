@@ -173,7 +173,7 @@ namespace NeuroOS
 					Console.WriteLine(e.ToString());
 				}
 			}
-			else if (args[0] == "contents")
+			else if (args[0] == "list")
 			{
 				try
 				{
