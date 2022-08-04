@@ -1,2 +1,2 @@
-# UniDOS
-Unix Nano Interface &amp; Disk Operating System
+# NeuroOS
+An open source x86 operating system developed in COSMOS
