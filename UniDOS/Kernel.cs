@@ -16,83 +16,177 @@ using Cosmos.System.Network.IPv4.TCP.FTP;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using Cosmos.HAL;
 using Cosmos.System.ExtendedASCII;
+using ONVI;
 
 namespace NeuroOS
 {
 	public class Kernel : Sys.Kernel
 	{
 		CosmosVFS fs = new CosmosVFS();
+		string username = "user";
+
 		protected override void BeforeRun()
 		{
-			var neurover = "1.2";
-			Console.WriteLine("Changing resolution...");
-			Console.SetWindowSize(90, 30);
-			Console.WriteLine("NeuroOS starting...");
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine("Initalizing Filesystem...");
+			VFSManager.RegisterVFS(fs);
 			try
 			{
-				VFSManager.RegisterVFS(fs);
-				var available_space = fs.GetAvailableFreeSpace(@"0:\");
-				Console.WriteLine("Available Free Space: " + available_space);
-				var fs_type = fs.GetFileSystemType(@"0:\");
-				Console.WriteLine("File System Type: " + fs_type);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Filesystem couldn't be initalized.");
-				Console.WriteLine("Continuing without Filesystem...");
-			}
-			Console.WriteLine("Initalizing Network...");
-			try
-			{
-				using (var xClient = new DHCPClient())
+
+				var openver = "1.3";
+				Console.WriteLine("Cosmos bootloader init complete... Loading the kernel.");
+				Console.WriteLine("[0.0001] Booting OpenNIX on physical CPU 0x0...");
+				Console.WriteLine("[0.0001] Device hardware:");
+				var RAMinMB = Cosmos.Core.CPU.GetAmountOfRAM();
+				Console.WriteLine(Cosmos.Core.CPU.GetCPUBrandString());
+				Console.WriteLine(RAMinMB + "MB of ram");
+				Console.WriteLine("[0.0001] run init as init process");
+				Console.WriteLine("[INIT] Started init.");
+				Console.WriteLine("[INIT] Changing resolution...");
+				Console.SetWindowSize(90, 30);
+				Console.WriteLine("Cosmos bootloader init complete... Loading the kernel.");
+				Console.WriteLine("[0.0001] Device hardware:");
+				Console.WriteLine(Cosmos.Core.CPU.GetCPUBrandString());
+				Console.WriteLine(RAMinMB + "MB of ram");
+				Console.WriteLine("[0.0001] run init as init process");
+				Console.WriteLine("[INIT] Started init.");
+				Console.WriteLine("[INIT] Changing resolution...");
+				Console.WriteLine("[INIT] Initalizing Filesystem...");
+				try
 				{
-					/** Send a DHCP Discover packet **/
-					//This will automatically set the IP config after DHCP response
-					xClient.SendDiscoverPacket();
+					var available_space = fs.GetAvailableFreeSpace(@"0:\");
+					Console.WriteLine("[FILESYSTEM] Available Free Space: " + available_space);
+					var fs_type = fs.GetFileSystemType(@"0:\");
+					Console.WriteLine("[FILESYSTEM] File System Type: " + fs_type);
 				}
-				DHCPClient netctl = new DHCPClient();
+				catch (Exception)
+				{
+					Console.BackgroundColor = ConsoleColor.DarkRed;
+					Console.ForegroundColor = ConsoleColor.White;
+					Console.Clear();
+					Console.WriteLine("OpenNIX has encountered a Kernel Panic!");
+					Console.WriteLine("");
+					Console.WriteLine("-[Unable to initalize the File System!]-");
+					Console.WriteLine("");
+					Console.WriteLine("The system has been halted. Press any key to reboot.");
+					Console.ReadKey();
+					Sys.Power.Reboot();
+				}
+				Console.WriteLine("[INIT] Setting network IP address...");
+				try
+				{
+					using (var xClient = new DHCPClient())
+					{
+						/** Send a DHCP Discover packet **/
+						//This will automatically set the IP config after DHCP response
+						xClient.SendDiscoverPacket();
+					}
+					DHCPClient netctl = new DHCPClient();
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("[NETWORK ERROR] Couldn't initalize network!");
+					Console.WriteLine("[NETWORK WARN] Continuing without networking...");
+				}
+				Console.WriteLine("[INIT] Initalizing PC Speaker...");
+				Console.WriteLine("[INIT] Init complete. Dropping to login manager...");
+				Console.Beep();
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("                             (          ");
+				Console.WriteLine("                           &&%          ");
+				Console.WriteLine("                        /&%%%&//        ");
+				Console.WriteLine("                      *,,,*%%&%#        ");
+				Console.WriteLine("                  .,///(&%%((#((        ");
+				Console.WriteLine("                 &&%&&%#*,,*,,&&%#      ");
+				Console.WriteLine("              ((((((///////&%%(((/      ");
+				Console.WriteLine("            ,,,,*%%&%%&&%&&,,*,,,,      ");
+				Console.WriteLine("         ,*///%&&(######//////%%&%(     ");
+				Console.WriteLine("       &&%&&%#*,,*,,&&%%&%%&&%*,,,,     ");
+				Console.WriteLine("    #####(/***/*/&%%#######///*/%%&#(   ");
+				Console.WriteLine("  ,,,,,%%&%%&&%&&,,,,,,*%&&%%&%%*,,**   ");
+				Console.WriteLine("     &&#######******%%&%##%#(******&&#/ ");
+				Console.WriteLine("            %%&%%&&%,,,,,%%&&%&&%%&,,,, ");
+				Console.WriteLine("                   ....*&##%##%%******* ");
+				Console.WriteLine("                              %%&&%&&%(*");
+				Console.ForegroundColor = ConsoleColor.White;
+				Console.WriteLine("Callux OpenNIX 1.3-build-9-17-22 x86 (development)");
+				for (; ; )
+				{
+					Console.Write("login: ");
+					string login = "";
+					login = Console.ReadLine();
+					if (VFSManager.DirectoryExists("0:\\" + "Users\\" + login))
+					{
+						Console.Clear();
+						Console.WriteLine("");
+						Console.WriteLine("Welcome to Callux OpenNIX version " + openver + ".");
+						Console.WriteLine("Type 'help' for help on commands.");
+						username = login;
+						break;
+					}
+					else
+					{
+						Console.WriteLine("login incorrect");
+					}
+				}
 			}
-			catch (Exception)
-			{
-				Console.WriteLine("NeuroOS error: Couldn't initalize network!");
-				Console.WriteLine("Continuing without networking...");
+			catch (Exception EX)
+            {
+				Console.BackgroundColor = ConsoleColor.DarkRed;
+				Console.ForegroundColor = ConsoleColor.White;
+				Console.Clear();
+				Console.WriteLine("OpenNIX has encountered a Kernel Panic!");
+				Console.WriteLine("");
+				Console.WriteLine($"-[{EX}]-");
+				Console.WriteLine("");
+				Console.WriteLine("The system has been halted. Press any key to reboot.");
+				Console.ReadKey();
+				Sys.Power.Reboot();
+				
 			}
-			Console.WriteLine("Initalizing PC Speaker...");
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine("                    .(/    ,//                    ");
-			Console.WriteLine("               ,(*              ,(*               ");
-			Console.WriteLine("          ,(*                        ./*          ");
-			Console.WriteLine("     .(*                                  .//     ");
-			Console.WriteLine(" #,                     ./                      /#");
-			Console.WriteLine("#                  ,(#########/                   ");
-			Console.WriteLine("#             ,(###################/              ");
-			Console.WriteLine("#            #########################            ");
-			Console.WriteLine("#            #########################            ");
-			Console.WriteLine("#            #########################            ");
-			Console.WriteLine("#            #########################            ");
-			Console.WriteLine("#            #########################            ");
-			Console.WriteLine("#             ,(###################/              ");
-			Console.WriteLine("#                  ,(#########/                   ");
-			Console.WriteLine(" #,                     ./                      /#");
-			Console.WriteLine("     .(*                                  .//     ");
-			Console.WriteLine("          ,(*                        ./*          ");
-			Console.WriteLine("               ,(*              ,(*               ");
-			Console.WriteLine("                    .(/    ,//                    ");
-			Sys.PCSpeaker.Beep(Sys.Notes.AS3, Sys.Durations.Sixteenth);
-			Sys.PCSpeaker.Beep(Sys.Notes.D4, Sys.Durations.Sixteenth);
-			Sys.PCSpeaker.Beep(Sys.Notes.F4, Sys.Durations.Sixteenth);
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine("Welcome to NeuroOS version " + neurover + ".");
-			Console.WriteLine("Type 'help' for help on commands.");
 		}
 
+		void DrawBar()
+		{
+			// TITLE BAR
+			// Storing Original Cursor Position
+			int origX = Console.CursorLeft;
+			int origY = Console.CursorTop;
+
+			// Setting Cursor Position Top Right Of Screen
+			Console.SetCursorPosition(0, 0);
+
+			// DRAWING THE TITLE BAR
+			// Coloring
+			Console.ForegroundColor = ConsoleColor.White;
+			Console.BackgroundColor = ConsoleColor.Red;
+
+			// Time
+			var hour = Cosmos.HAL.RTC.Hour;
+			var minute = Cosmos.HAL.RTC.Minute;
+			var strhour = hour.ToString();
+			var strmin = minute.ToString();
+
+			// Initial Bar
+			Console.WriteLine("OPENNIX 1.3    KERNEL 1.3-BUILD-9-17-22    OPENNIX SHELL v1.3                        " + strhour + ":" + strmin);
+
+			// Resetting Colors
+			Console.BackgroundColor = ConsoleColor.Black;
+
+			// Resetting Cursor Position
+			Console.SetCursorPosition(origX, origY);
+			Console.ForegroundColor = ConsoleColor.White;
+		}
 		protected override void Run()
 		{
+			DrawBar();
+			Directory.SetCurrentDirectory($"Users\\{username}");
+			string path = Directory.GetCurrentDirectory();
+			if (path == username)
+            {
+				path = $"Users\\{username}";
+            }
 			Cosmos.Core.Memory.Heap.Collect();
 			Console.CursorVisible = true;
-			Console.Write("NeuroOS#> ");
+			Console.Write($"{username}@OpenNIX#[{path}]> ");
 			string input = "";
 			input = Console.ReadLine();
 			string[] args;
@@ -105,15 +199,19 @@ namespace NeuroOS
 			if (args[0] == "help")
 			{
 				Console.WriteLine("NOTE: The * symbol means the command has not been implemented yet.");
-				Console.WriteLine("NeuroOS help:");
+				Console.WriteLine("OpenNIX help:");
 				Console.WriteLine("help -- shows this list of commands");
 				Console.WriteLine("cellfetch -- shows system information");
 				Console.WriteLine("build -- shows information about this build of NeuroOS");
+				Console.WriteLine("echo - print what the user says");
 				Console.WriteLine("touch -- create a file");
-				Console.WriteLine("read -- read a file's contents");
-				Console.WriteLine("list -- list the contents of a directory");
-				Console.WriteLine("mkfolder -- make a directory");
-				Console.WriteLine("del -- delete a file or directory");
+				Console.WriteLine("cat -- read a file's contents");
+				Console.WriteLine("ls -- list the contents of a directory");
+				Console.WriteLine("diskutil -- utils for managing hard drives");
+				Console.WriteLine("mkdir -- make a directory");
+				Console.WriteLine("rm -- delete a file or directory");
+				Console.WriteLine("pwd -- print the directory you are in");
+				Console.WriteLine("cd -- change directory");
 				Console.WriteLine("curl* -- use the internet to get information");
 				Console.WriteLine("chsize -- change screen resolution");
 				Console.WriteLine("beep -- makes a pc speaker beep");
@@ -126,29 +224,26 @@ namespace NeuroOS
 			}
 			else if (args[0] == "cellfetch")
 			{
-				var usedRAM = Cosmos.Core.GCImplementation.GetUsedRAM() / 1024;
+				string usedRAM = (Cosmos.Core.GCImplementation.GetUsedRAM() / 1024 / 1024).ToString();
 				var uptimeSpan = Cosmos.Core.CPU.GetCPUUptime();
 				var RAMinMB = Cosmos.Core.CPU.GetAmountOfRAM();
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("                    .(/    ,//                      OS: NeuroOS 1.2 x86");
-				Console.WriteLine("               ,(*              ,(*                 Kernel: 1.2-build8-4-22");
-				Console.WriteLine("          ,(*                        ./*            Uptime: " + uptimeSpan);
-				Console.WriteLine("     .(*                                  .//       Packages: 20 (cosmos)");
-				Console.WriteLine(" #,                     ./                      /#  Shell: nucleus");
-				Console.WriteLine("#                  ,(#########/                     Resolution: " + Console.WindowWidth + "x" + Console.WindowHeight);
-				Console.WriteLine("#             ,(###################/                Terminal: console");
-				Console.WriteLine("#            #########################              CPU: " + Cosmos.Core.CPU.GetCPUVendorName());
-				Console.WriteLine("#            #########################              Memory: " + usedRAM + "/" + RAMinMB + "MB");
-				Console.WriteLine("#            #########################            ");
-				Console.WriteLine("#            #########################            ");
-				Console.WriteLine("#            #########################            ");
-				Console.WriteLine("#             ,(###################/              ");
-				Console.WriteLine("#                  ,(#########/                   ");
-				Console.WriteLine(" #,                     ./                      /#");
-				Console.WriteLine("     .(*                                  .//       Created by EnterTheVoid-x86.");
-				Console.WriteLine("          ,(*                        ./*            Contributors:");
-				Console.WriteLine("               ,(*              ,(*                 Nex389");
-				Console.WriteLine("                    .(/    ,//                    ");
+				Console.WriteLine("                             (          OS: OpenNIX 1.3 x86");
+				Console.WriteLine("                           &&%          Kernel: 1.3-build9-17-22");
+				Console.WriteLine("                        /&%%%&//        Uptime: " + uptimeSpan);
+				Console.WriteLine("                      *,,,*%%&%#        Packages: 20 (cosmos)");
+				Console.WriteLine("                  .,///(&%%((#((        Shell: onsh");
+				Console.WriteLine("                 &&%&&%#*,,*,,&&%#      Resolution: " + Console.WindowWidth + "x" + Console.WindowHeight);
+				Console.WriteLine("              ((((((///////&%%(((/      Terminal: console");
+				Console.WriteLine("            ,,,,*%%&%%&&%&&,,*,,,,      CPU: " + Cosmos.Core.CPU.GetCPUBrandString());
+				Console.WriteLine("         ,*///%&&(######//////%%&%(     Memory: " + usedRAM + "/" + RAMinMB + "MB");
+				Console.WriteLine("       &&%&&%#*,,*,,&&%%&%%&&%*,,,,     ");
+				Console.WriteLine("    #####(/***/*/&%%#######///*/%%&#(   ");
+				Console.WriteLine("  ,,,,,%%&%%&&%&&,,,,,,*%&&%%&%%*,,**   ");
+				Console.WriteLine("     &&#######******%%&%##%#(******&&#/ Created by EnterTheVoid-x86.");
+				Console.WriteLine("            %%&%%&&%,,,,,%%&&%&&%%&,,,, Contributors:");
+				Console.WriteLine("                   ....*&##%##%%******* Nex389");
+				Console.WriteLine("                              %%&&%&&%(*");
 				Console.ForegroundColor = ConsoleColor.White;
 			}
 			else if (args[0] == "touch")
@@ -162,48 +257,31 @@ namespace NeuroOS
 					Console.WriteLine(e.ToString());
 				}
 			}
-			else if (args[0] == "read")
+			else if (args[0] == "cat")
 			{
 				try
 				{
-					Console.WriteLine(File.ReadAllText("0:\\" + args[1]));
+					Console.WriteLine(File.ReadAllText(args[1]));
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine(e.ToString());
 				}
 			}
-			else if (args[0] == "list")
-			{
-				try
-				{
-					try
-					{
-						var directory_list = VFSManager.GetDirectoryListing("0:\\" + args[1]);
-						foreach (var directoryEntry in directory_list)
-						{
-							Console.WriteLine(directoryEntry.mName);
-						}
-					}
-					catch (Exception)
-					{
-						Console.WriteLine("0:\\");
-						var directory_list = VFSManager.GetDirectoryListing("0:\\");
-						foreach (var directoryEntry in directory_list)
-						{
-							Console.WriteLine(directoryEntry.mName);
-						}
-					}
-				}
-				catch (Exception)
-				{
-					Console.Beep();
-					Console.WriteLine("NeuroOS error: Couldn't list the directory!");
-				}
-			}
 			else if (args[0] == "beep")
 			{
 				Console.Beep();
+			}
+			else if (args[0] == "onvi")
+			{
+				try
+				{
+					ONVI.ONVI.StartONVI(args);
+				}
+				catch (IndexOutOfRangeException)
+                {
+					Console.WriteLine("No file name given!");
+				}
 			}
 			else if (args[0] == "chsize")
 			{
@@ -243,7 +321,7 @@ namespace NeuroOS
 				}
 				else
 				{
-					Console.WriteLine("Invalid input.");
+					Console.WriteLine("[0.0005 COMMAND ERROR] Invalid input.");
 				}
 			}
 			else if (args[0] == "play")
@@ -341,60 +419,135 @@ namespace NeuroOS
 			{
 				Console.Clear();
 			}
+			else if (args[0] == "ls")
+			{
+				var command = new LSCommand();
+				command.LS(args);
+			}
+			else if (args[0] == "adduser")
+			{
+				var command = new adduser();
+				command.useradd(args);
+			}
+			else if (args[0] == "echo")
+			{
+				try
+				{
+					Console.WriteLine(args[1]);
+				}
+				catch (IndexOutOfRangeException)
+				{
+					Console.WriteLine("No input given.");
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("General Error.");
+				}
+			}
 			else if (args[0] == "throwexception")
 			{
-				throw new Exception("User initiated crash.");
+				Console.BackgroundColor = ConsoleColor.DarkRed;
+				Console.ForegroundColor = ConsoleColor.White;
+				Console.Clear();
+				Console.WriteLine("OpenNIX has encountered a Kernel Panic!");
+				Console.WriteLine("");
+				Console.WriteLine($"-[User initated crash.]-");
+				Console.WriteLine("");
+				Console.WriteLine("The system has been halted. Press any key to reboot.");
+				Console.ReadKey();
+				Sys.Power.Reboot();
 			}
 			else if (args[0] == "calculator")
 			{
-				Console.WriteLine("Not implemented yet.");
+				Console.WriteLine("[0.0005 INFO] Command not implemented yet.");
+			}
+			else if (args[0] == "diskutil")
+			{
+				Console.WriteLine("diskutil v0.1 alpha");
+				try
+				{
+					if (args[1] == "list")
+					{
+						foreach (var disk in VFSManager.GetDisks())
+						{
+							Console.WriteLine(disk.ToString());
+						}
+					}
+					else if (args[1] == "format")
+					{
+						Console.WriteLine("formatting disk " + args[2]);
+					}
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("[0.0005 COMMAND ERROR] General Error.");
+
+				}
 			}
 			else if (args[0] == "build")
 			{
 				if (Environment.Is64BitProcess)
 				{
-					Console.WriteLine("This build of NeuroOS is running on a 64-bit CPU");
+					Console.WriteLine("This build of OpenNIX is running on a 64-bit CPU");
 				}
 				else
 				{
-					Console.WriteLine("This build of NeuroOS is running on a 32-bit CPU");
+					Console.WriteLine("This build of OpenNIX is running on a 32-bit CPU");
 				}
 			}
-			else if (args[0] == "mkfolder")
+			else if (args[0] == "mkdir")
 			{
 				try
 				{
 					Console.WriteLine("Creating folder named " + args[1]);
-					VFSManager.CreateDirectory("0:\\" + args[1]);
+					VFSManager.CreateDirectory("0:\\" + Directory.GetCurrentDirectory() + args[1]);
 				}
 				catch (Exception e)
 				{
 					Console.WriteLine(e);
 				}
 			}
-			else if (args[0] == "del")
+			else if (args[0] == "rm")
 			{
 				try
 				{
-					if (VFSManager.FileExists("0:\\" + args[1]))
+					if (VFSManager.FileExists("0:\\" + Directory.GetCurrentDirectory() + args[1]))
 					{
 						Console.WriteLine("Deleting file named " + args[1]);
-						VFSManager.DeleteFile("0:\\" + args[1]);
+						VFSManager.DeleteFile("0:\\" + Directory.GetCurrentDirectory() + args[1]);
 					}
-					else if (VFSManager.DirectoryExists("0:\\" + args[1]))
-                    {
+					else if (VFSManager.DirectoryExists("0:\\" + Directory.GetCurrentDirectory() + args[1]))
+					{
 						Console.WriteLine("Deleting folder named " + args[1]);
-						VFSManager.DeleteDirectory("0:\\" + args[1], true);
+						VFSManager.DeleteDirectory("0:\\" + Directory.GetCurrentDirectory() + args[1], true);
 					}
 				}
 				catch (Exception e)
-                {
+				{
 					Console.WriteLine(e);
-                }
+				}
+			}
+			else if (args[0] == "cd")
+			{
+				try
+				{
+					if (args[1] == "0:\\")
+					{
+						Directory.SetCurrentDirectory("");
+					}
+					else
+                    {
+						Directory.SetCurrentDirectory(args[1]);
+					}
+				}
+				catch (Exception)
+				{
+					Console.WriteLine("[0.0005 COMMAND ERROR] General Error.");
+				}
 			}
 			else
 			{
-				Console.WriteLine("NeuroOS error: Unknown Command " + args[0]);
+				Console.WriteLine("onsh: " + args[0] + ": command not found");
 			}
 		}
 	}
