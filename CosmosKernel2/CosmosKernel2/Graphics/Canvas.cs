@@ -1,4 +1,4 @@
-﻿using Cosmos.Core.Memory;
+using Cosmos.Core.Memory;
 using Cosmos.HAL.Drivers.PCI.Audio;
 using Cosmos.System.Audio.IO;
 using Cosmos.System.Audio;
@@ -12,18 +12,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sys = Cosmos.System;
+using CosmosKernel1.UI;
 
 namespace CosmosKernel1.Graphics
 {
     public class Canvas
     {
-        [ManifestResourceStream(ResourceName = "CosmosKernel2.Wallpaper.bmp")]
+        static Button shutdownButton;
+        [ManifestResourceStream(ResourceName = "CosmosKernel1.Wallpaper.bmp")]
         static byte[] wallpaper;
         static Bitmap bitmap = new Bitmap(wallpaper);
-        [ManifestResourceStream(ResourceName = "CosmosKernel2.Cursor.bmp")]
+        [ManifestResourceStream(ResourceName = "CosmosKernel1.Cursor.bmp")]
         static byte[] cursor;
         static Bitmap CursorBitmap = new Bitmap(cursor);
-        [ManifestResourceStream(ResourceName = "CosmosKernel2.StartupSound.wav")]
+        [ManifestResourceStream(ResourceName = "CosmosKernel1.StartupSound.wav")]
         static byte[] StartupSoundWAVE;
         static Pen pen = new Pen(Color.White);
         static uint RAMinMB = Cosmos.Core.CPU.GetAmountOfRAM();
@@ -44,6 +46,14 @@ namespace CosmosKernel1.Graphics
                 KernelHelpers.canvas.DrawString("OpenNIX 10", PCScreenFont.Default, pen, 0, 587);
                 FreedMem = Heap.Collect();
                 KernelHelpers.canvas.DrawString(CPUModel, PCScreenFont.Default, pen, 0, 20);
+                FreedMem = Heap.Collect();
+                shutdownButton.Draw(KernelHelpers.canvas);
+                shutdownButton.Update();
+                if (shutdownButton.ButtonPressed)
+                {
+                    Sys.Power.Shutdown();
+                    Sys.Power.QemuShutdown(); // added this line because seabios is too old.
+                }
                 FreedMem = Heap.Collect();
                 KernelHelpers.canvas.DrawString($"*** IN DEVELOPMENT *** FPS: {Kernel.FPS} | NUMBER OF OBJECTS FREED: {FreedMem} | {RAMinMB}MB OF RAM", PCScreenFont.Default, pen, 0, 0);
                 FreedMem = Heap.Collect();
@@ -113,7 +123,11 @@ namespace CosmosKernel1.Graphics
             Console.WriteLine("Copyright (C) 2022, Callux");
             KernelHelpers.canvas = new SVGAIICanvas(new Mode(800, 600, ColorDepth.ColorDepth32));
             KernelHelpers.canvas.Clear(Color.Blue);
-
+            shutdownButton = new Button();
+            shutdownButton.X = 40;
+            shutdownButton.Y = 40;
+            shutdownButton.Width = 135;
+            shutdownButton.Text = "Shutdown OpenNIX";
 
             Sys.MouseManager.ScreenWidth = 800;
             Sys.MouseManager.ScreenHeight = 600;
