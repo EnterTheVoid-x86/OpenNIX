@@ -1,0 +1,12 @@
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\bin\Debug\net6.0\OpenNIX DevKit build.deps.json
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\bin\Debug\net6.0\OpenNIX DevKit build.dll
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\bin\Debug\net6.0\OpenNIX DevKit build.pdb
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.csproj.AssemblyReference.cache
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.AssemblyInfoInputs.cache
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.AssemblyInfo.cs
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.csproj.CoreCompileInputs.cache
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.dll
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\refint\OpenNIX DevKit build.dll
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\OpenNIX DevKit build.pdb
+C:\Users\SE4N\source\repos\OpenNIX DevKit build\OpenNIX DevKit build\obj\Debug\net6.0\ref\OpenNIX DevKit build.dll

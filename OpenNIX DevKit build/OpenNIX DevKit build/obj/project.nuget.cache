@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "vKJKU1p8EB321N0vRKJRaK/Ygs9LTyDVCZW5C+XYhUFiZnMeDzory8PyBJj6ojxKlSUR/qbUZbe5Cb7dZ9tNvA==",
+  "success": true,
+  "projectFilePath": "E:\\sean_drive\\OpenNIX DevKit build\\OpenNIX DevKit build\\OpenNIX.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sean\\.nuget\\packages\\cosmos.build\\0.1.0-localbuild20230710112145\\cosmos.build.0.1.0-localbuild20230710112145.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\cosmos.common\\0.1.0-localbuild20230710112156\\cosmos.common.0.1.0-localbuild20230710112156.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\cosmos.core\\0.1.0-localbuild20230710112156\\cosmos.core.0.1.0-localbuild20230710112156.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\cosmos.debug.kernel\\0.1.0-localbuild20230710112156\\cosmos.debug.kernel.0.1.0-localbuild20230710112156.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\cosmos.hal2\\0.1.0-localbuild20230710112156\\cosmos.hal2.0.1.0-localbuild20230710112156.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\cosmos.system2\\0.1.0-localbuild20230710112156\\cosmos.system2.0.1.0-localbuild20230710112156.nupkg.sha512",
+    "C:\\Users\\Sean\\.nuget\\packages\\il2cpu.api\\0.1.0-localbuild20230710112156\\il2cpu.api.0.1.0-localbuild20230710112156.nupkg.sha512"
+  ],
+  "logs": []
+}
